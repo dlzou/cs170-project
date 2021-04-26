@@ -158,7 +158,7 @@ def write_output_file(G, c, k, path):
 
     assert nx.is_connected(H), "The solution is invalid as the graph disconnects"
 
-    with open(path, "w") as fo:
+    with open(path, "w+") as fo:
         fo.write(str(len(c)) + "\n")
         for city in c:
             fo.write(str(city) + "\n")
