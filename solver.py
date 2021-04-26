@@ -97,9 +97,11 @@ def get_SP(G, s, t):
 # For testing a folder of inputs to create a folder of outputs, you can use glob (need to import it)
 
 if __name__ == '__main__':
-    inputs = glob.glob('inputs/*')
+    inputs = glob.glob('inputs/*/*.in')
     for input_path in inputs:
-        output_path = 'outputs/' + basename(normpath(input_path))[:-3] + '.out'
+        filename = basename(normpath(input_path))[:-3]
+        size = filename.split("-")[0]
+        output_path = 'outputs/' + size + '/' + filename + '.out'
         G = read_input_file(input_path)
         c, k = solve(G)
         assert is_valid_solution(G, c, k)
