@@ -1,4 +1,5 @@
 from networkx.algorithms.shortest_paths.weighted import dijkstra_path
+from networkx.exception import NetworkXNoPath
 from parse import read_input_file, write_output_file
 from utils import is_valid_solution, calculate_score
 from os.path import basename, normpath, exists, dirname
@@ -29,7 +30,7 @@ def solve(G):
             G_temp = G.copy()
             G_temp.remove_node(node)
             _, _, SP_temp = get_SP(G_temp, s, t)
-            if SP_temp >= rm_node[1]:
+            if SP_temp and SP_temp >= rm_node[1]:
                 rm_node = (node, SP_temp)
 
         rm_edge = (None, SP)
@@ -37,13 +38,13 @@ def solve(G):
             G_temp = G.copy()
             G_temp.remove_edge(*edge)
             _, _, SP_temp = get_SP(G_temp, s, t)
-            if SP_temp >= rm_edge[1]:
+            if SP_temp and SP_temp >= rm_edge[1]:
                 rm_edge = (edge, SP_temp)
 
-        if rm_node[0] and rm_node[1] >= rm_edge[1]:
+        if rm_node[0] and len(c) < c_max and rm_node[1] >= rm_edge[1]:
             G.remove_node(rm_node[0])
             c.append(rm_node[0])
-        elif rm_edge[0]:
+        elif rm_edge[0] and len(k) < k_max:
             G.remove_edge(*rm_edge[0])
             k.append(rm_edge[0])
         else:
@@ -62,10 +63,13 @@ def get_constraints(nodes):
 
 
 def get_SP(G, s, t):
-    SP_nodes = dijkstra_path(G, s, t)
-    SP_edges = [(SP_nodes[i-1], SP_nodes[i]) for i in range(1, len(SP_nodes))]
-    SP = sum([G.edges[e]["weight"] for e in SP_edges])
-    return SP_nodes, SP_edges, SP
+    try:
+        SP_nodes = dijkstra_path(G, s, t)
+        SP_edges = [(SP_nodes[i-1], SP_nodes[i]) for i in range(1, len(SP_nodes))]
+        SP = sum([G.edges[e]["weight"] for e in SP_edges])
+        return SP_nodes, SP_edges, SP
+    except NetworkXNoPath as e:
+        return None, None, None
 
 
 # Here's an example of how to run your solver.
