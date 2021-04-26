@@ -106,4 +106,5 @@ if __name__ == '__main__':
         c, k = solve(G)
         assert is_valid_solution(G, c, k)
         distance = calculate_score(G, c, k)
+        print(f'Path difference for {filename}: {distance}')
         write_output_file(G, c, k, output_path)
