@@ -103,8 +103,9 @@ if __name__ == '__main__':
         size = filename.split("-")[0]
         output_path = 'outputs/' + size + '/' + filename + '.out'
         G = read_input_file(input_path)
+        print(f'Path difference for {filename}: ', end='')
         c, k = solve(G)
         assert is_valid_solution(G, c, k)
         distance = calculate_score(G, c, k)
-        print(f'Path difference for {filename}: {distance}')
+        print(distance)
         write_output_file(G, c, k, output_path)
