@@ -29,7 +29,7 @@ def solve(G):
             G_temp = G.copy()
             G_temp.remove_node(node)
             _, _, SP_temp = get_SP(G_temp, s, t)
-            if SP_temp > rm_node[1]:
+            if SP_temp >= rm_node[1]:
                 rm_node = (node, SP_temp)
 
         rm_edge = (None, SP)
@@ -37,7 +37,7 @@ def solve(G):
             G_temp = G.copy()
             G_temp.remove_edge(*edge)
             _, _, SP_temp = get_SP(G_temp, s, t)
-            if SP_temp > rm_edge[1]:
+            if SP_temp >= rm_edge[1]:
                 rm_edge = (edge, SP_temp)
 
         if rm_node[0] and rm_node[1] >= rm_edge[1]:
