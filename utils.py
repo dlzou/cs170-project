@@ -24,7 +24,10 @@ def is_valid_solution(G, c, k):
     assert H.has_node(0), 'Invalid Solution: Source vertex is removed'
     assert H.has_node(size - 1), 'Invalid Solution: Target vertex is removed'
 
-    return nx.is_connected(H)
+    assert nx.is_connected(H), "Invalid Solution: Graph is not connected"
+
+    return True
+
 
 def calculate_score(G, c, k):
     """

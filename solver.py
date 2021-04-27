@@ -1,5 +1,6 @@
 from networkx.algorithms.shortest_paths.weighted import dijkstra_path
 from networkx.exception import NetworkXNoPath
+from networkx import is_connected
 from parse import read_input_file, write_output_file
 from utils import is_valid_solution, calculate_score
 from os.path import basename, normpath, exists, dirname
@@ -29,17 +30,19 @@ def solve(G):
         for node in SP_nodes[1:-1]:
             G_temp = G.copy()
             G_temp.remove_node(node)
-            _, _, SP_temp = get_SP(G_temp, s, t)
-            if SP_temp and SP_temp >= rm_node[1]:
-                rm_node = (node, SP_temp)
+            if is_connected(G_temp):
+                _, _, SP_temp = get_SP(G_temp, s, t)
+                if SP_temp >= rm_node[1]:
+                    rm_node = (node, SP_temp)
 
         rm_edge = (None, SP)
         for edge in SP_edges:
             G_temp = G.copy()
             G_temp.remove_edge(*edge)
-            _, _, SP_temp = get_SP(G_temp, s, t)
-            if SP_temp and SP_temp >= rm_edge[1]:
-                rm_edge = (edge, SP_temp)
+            if is_connected(G_temp):
+                _, _, SP_temp = get_SP(G_temp, s, t)
+                if SP_temp >= rm_edge[1]:
+                    rm_edge = (edge, SP_temp)
 
         if rm_node[0] and len(c) < c_max and rm_node[1] >= rm_edge[1]:
             G.remove_node(rm_node[0])
@@ -69,7 +72,7 @@ def get_SP(G, s, t):
         SP = sum([G.edges[e]["weight"] for e in SP_edges])
         return SP_nodes, SP_edges, SP
     except NetworkXNoPath as e:
-        return None, None, None
+        raise e
 
 
 # Here's an example of how to run your solver.
@@ -97,15 +100,32 @@ def get_SP(G, s, t):
 # For testing a folder of inputs to create a folder of outputs, you can use glob (need to import it)
 
 if __name__ == '__main__':
-    inputs = glob.glob('inputs/*/*.in')
-    for input_path in inputs:
-        filename = basename(normpath(input_path))[:-3]
+    if len(sys.argv) == 2:
+        path = sys.argv[1]
+        filename = path.split("/")[-1].split(".")[0]
         size = filename.split("-")[0]
-        output_path = 'outputs/' + size + '/' + filename + '.out'
-        G = read_input_file(input_path)
-        print(f'Path difference for {filename}: ', end='')
+        G = read_input_file(path)
         c, k = solve(G)
-        assert is_valid_solution(G, c, k)
-        distance = calculate_score(G, c, k)
-        print(distance)
-        write_output_file(G, c, k, output_path)
+        is_valid_solution(G, c, k)
+        print("Shortest Path Difference: {}".format(calculate_score(G, c, k)))
+
+        if not exists(dirname(f"outputs/{size}/")):
+            try:
+                makedirs(dirname(f"outputs/{size}/"))
+            except OSError as e: # Guard against race condition
+                raise e
+        write_output_file(G, c, k, f"outputs/{size}/{filename}.out")
+
+    else:
+        inputs = glob.glob('inputs/*/*.in')
+        for input_path in inputs:
+            filename = basename(normpath(input_path))[:-3]
+            size = filename.split("-")[0]
+            output_path = 'outputs/' + size + '/' + filename + '.out'
+            G = read_input_file(input_path)
+            print(f'Path difference for {filename}: ', end='')
+            c, k = solve(G)
+            is_valid_solution(G, c, k)
+            distance = calculate_score(G, c, k)
+            print(distance)
+            write_output_file(G, c, k, output_path)
