@@ -23,6 +23,7 @@ def solve(G):
     s, t = 0, num_nodes - 1
     c_max, k_max = get_constraints(num_nodes)
     c, k = [], []
+
     rm_node, max_sp = brute_force_node(G)
     for v in rm_node:
         G.remove_node(v)
@@ -30,6 +31,7 @@ def solve(G):
 
     while len(k) <= k_max:
         SP_nodes, SP_edges, SP = get_SP(G, s, t)
+
         rm_edge = (None, SP)
         for edge in SP_edges:
             G_temp = G.copy()
@@ -38,6 +40,7 @@ def solve(G):
                 _, _, SP_temp = get_SP(G_temp, s, t)
                 if SP_temp >= rm_edge[1]:
                     rm_edge = (edge, SP_temp)
+
         if rm_edge[0] and len(k) < k_max:
             G.remove_edge(*rm_edge[0])
             k.append(rm_edge[0])
@@ -45,8 +48,6 @@ def solve(G):
             break
 
     return c, k
-
-
 
 
 def find_complement(G, edges, nodes):
@@ -69,6 +70,7 @@ def brute_force_node(G):
     if curr_max >= max:
         res, max = curr_res, curr_max
     return res, max
+
 
 def best_sol(G, candidate):
     res, max = None, -1
@@ -110,54 +112,54 @@ def get_SP(G, s, t):
 
 # Usage: python3 solver.py inputs/inputs/small/small-1.in
 
-if __name__ == "__main__":
-    assert len(sys.argv) == 2
-    path = sys.argv[1]
-    filename = path.split("/")[-1].split(".")[0]
-    size = filename.split("-")[0]
-    G = read_input_file(path)
-    c, k = solve(G)
-    assert is_valid_solution(G, c, k)
-    print("Shortest Path Difference: {}".format(calculate_score(G, c, k)))
+# if __name__ == "__main__":
+#     assert len(sys.argv) == 2
+#     path = sys.argv[1]
+#     filename = path.split("/")[-1].split(".")[0]
+#     size = filename.split("-")[0]
+#     G = read_input_file(path)
+#     c, k = solve(G)
+#     assert is_valid_solution(G, c, k)
+#     print("Shortest Path Difference: {}".format(calculate_score(G, c, k)))
 
 
-    if not exists(dirname(f"outputs/{size}/")):
-        try:
-            makedirs(dirname(f"outputs/{size}/"))
-        except OSError as e: # Guard against race condition
-            raise e
-    write_output_file(G, c, k, f"outputs/{size}/{filename}.out")
+#     if not exists(dirname(f"outputs/{size}/")):
+#         try:
+#             makedirs(dirname(f"outputs/{size}/"))
+#         except OSError as e: # Guard against race condition
+#             raise e
+#     write_output_file(G, c, k, f"outputs/{size}/{filename}.out")
 
 
 # For testing a folder of inputs to create a folder of outputs, you can use glob (need to import it)
-#
-# if __name__ == '__main__':
-#     if len(sys.argv) == 2:
-#         path = sys.argv[1]
-#         filename = path.split("/")[-1].split(".")[0]
-#         size = filename.split("-")[0]
-#         G = read_input_file(path)
-#         c, k = solve(G)
-#         is_valid_solution(G, c, k)
-#         print("Shortest Path Difference: {}".format(calculate_score(G, c, k)))
-#
-#         if not exists(dirname(f"outputs/{size}/")):
-#             try:
-#                 makedirs(dirname(f"outputs/{size}/"))
-#             except OSError as e: # Guard against race condition
-#                 raise e
-#         write_output_file(G, c, k, f"outputs/{size}/{filename}.out")
-#
-#     else:
-#         inputs = glob.glob('inputs/*/*.in')
-#         for input_path in inputs:
-#             filename = basename(normpath(input_path))[:-3]
-#             size = filename.split("-")[0]
-#             output_path = 'outputs/' + size + '/' + filename + '.out'
-#             G = read_input_file(input_path)
-#             print(f'Path difference for {filename}: ', end='')
-#             c, k = solve(G)
-#             is_valid_solution(G, c, k)
-#             distance = calculate_score(G, c, k)
-#             print(distance)
-#             write_output_file(G, c, k, output_path)
+
+if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        path = sys.argv[1]
+        filename = path.split("/")[-1].split(".")[0]
+        size = filename.split("-")[0]
+        G = read_input_file(path)
+        c, k = solve(G)
+        is_valid_solution(G, c, k)
+        print("Shortest Path Difference: {}".format(calculate_score(G, c, k)))
+
+        if not exists(dirname(f"outputs/{size}/")):
+            try:
+                makedirs(dirname(f"outputs/{size}/"))
+            except OSError as e: # Guard against race condition
+                raise e
+        write_output_file(G, c, k, f"outputs/{size}/{filename}.out")
+
+    else:
+        inputs = glob.glob('inputs/*/*.in')
+        for input_path in inputs:
+            filename = basename(normpath(input_path))[:-3]
+            size = filename.split("-")[0]
+            output_path = 'outputs/' + size + '/' + filename + '.out'
+            G = read_input_file(input_path)
+            print(f'Path difference for {filename}: ', end='')
+            c, k = solve(G)
+            is_valid_solution(G, c, k)
+            distance = calculate_score(G, c, k)
+            print(distance)
+            write_output_file(G, c, k, output_path)
