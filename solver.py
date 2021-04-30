@@ -236,7 +236,25 @@ def get_SP(G, s, t):
 solve = solve_anneal
 
 if __name__ == '__main__':
-    if len(sys.argv) == 2:
+    if len(sys.argv) == 3:
+        size = sys.argv[2]
+        if size == "small" or size == "medium" or size == "large":
+            inputs = glob.glob(f"inputs/{size}/*.in")
+            for input_path in inputs:
+                filename = basename(normpath(input_path))[:-3]
+                size = filename.split("-")[0]
+                output_path = "outputs/" + size + "/" + filename + ".out"
+                G = read_input_file(input_path)
+                print(f"Path difference for {filename}: ", end="")
+                c, k = solve(G)
+                is_valid_solution(G, c, k)
+                distance = calculate_score(G, c, k)
+                print(distance)
+                write_output_file(G, c, k, output_path)
+        else:
+            print("Second argument must be small, medium, or large")
+
+    elif len(sys.argv) == 2:
         path = sys.argv[1]
         filename = path.split("/")[-1].split(".")[0]
         size = filename.split("-")[0]
@@ -253,13 +271,13 @@ if __name__ == '__main__':
         write_output_file(G, c, k, f"outputs/{size}/{filename}.out")
 
     else:
-        inputs = glob.glob('inputs/*/*.in')
+        inputs = glob.glob("inputs/*/*.in")
         for input_path in inputs:
             filename = basename(normpath(input_path))[:-3]
             size = filename.split("-")[0]
-            output_path = 'outputs/' + size + '/' + filename + '.out'
+            output_path = "outputs/" + size + "/" + filename + ".out"
             G = read_input_file(input_path)
-            print(f'Path difference for {filename}: ', end='')
+            print(f"Path difference for {filename}: ", end="")
             c, k = solve(G)
             is_valid_solution(G, c, k)
             distance = calculate_score(G, c, k)
