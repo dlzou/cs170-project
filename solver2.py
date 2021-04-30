@@ -1,6 +1,6 @@
-from networkx.algorithms.shortest_paths.weighted import dijkstra_path, bellman_ford_path
-from networkx.exception import NetworkXNoPath
-from networkx import is_connected
+# from networkx.algorithms.shortest_paths.weighted import dijkstra_path, bellman_ford_path
+# from networkx.exception import NetworkXNoPath
+# from networkx import is_connected
 from parse import read_input_file, write_output_file
 from utils import is_valid_solution, calculate_score
 from os.path import basename, normpath, exists, dirname
@@ -8,6 +8,7 @@ from os import makedirs
 import sys
 import glob
 import itertools
+import networkx as nx
 
 
 def solve(G):
@@ -23,68 +24,51 @@ def solve(G):
     s, t = 0, num_nodes - 1
     c_max, k_max = get_constraints(num_nodes)
     c, k = [], []
-    rm_node, max_sp = brute_force_node(G)
+    rm_node, rm_edge, max_sp = brute_force(G)
     for v in rm_node:
         G.remove_node(v)
         c.append(v)
-
-    while len(k) <= k_max:
-        SP_nodes, SP_edges, SP = get_SP(G, s, t)
-        rm_edge = (None, SP)
-        for edge in SP_edges:
-            G_temp = G.copy()
-            G_temp.remove_edge(*edge)
-            if is_connected(G_temp):
-                _, _, SP_temp = get_SP(G_temp, s, t)
-                if SP_temp >= rm_edge[1]:
-                    rm_edge = (edge, SP_temp)
-        if rm_edge[0] and len(k) < k_max:
-            G.remove_edge(*rm_edge[0])
-            k.append(rm_edge[0])
-        else:
-            break
-
+    for e in rm_edge:
+        G.remove_edge(*e)
+        k.append(e)
     return c, k
 
+def longest_path(G):
+    G = G.copy()
 
 
-
-def find_complement(G, edges, nodes):
-    c, k = [], []
-    for v in G.nodes:
-        if not v in nodes:
-            c.append(v)
-    for e in G.edges:
-        if not e in edges:
-            k.append(e)
-    return c, k
-
-
-def brute_force_node(G):
+def brute_force(G):
     num_nodes = G.number_of_nodes()
     c_max, k_max = get_constraints(num_nodes)
-    res, max = None, -1
-    candidates = list(itertools.combinations(G.nodes, c_max))
-    curr_res, curr_max = best_sol(G, candidates)
-    if curr_max >= max:
-        res, max = curr_res, curr_max
-    return res, max
-
-def best_sol(G, candidate):
-    res, max = None, -1
+    candidate_v = list(itertools.combinations(G.nodes, c_max))
+    res_edge, res_node, max_sp = None, None, -1
     num_nodes = G.number_of_nodes()
     s, t = 0, num_nodes - 1
-    for curr in candidate:
-        if s in curr or t in curr:
+    for curr_nodes in candidate_v:
+        v_res_curr = []
+        if s in curr_nodes or t in curr_nodes:
             continue
         G_temp = G.copy()
-        for node in curr:
+        for node in curr_nodes:
             G_temp.remove_node(node)
-        if is_connected(G_temp):
-            _, _, SP_temp = get_SP(G_temp, s, t)
-            if SP_temp >= max:
-                res, max = curr, SP_temp
-    return res, max
+            v_res_curr.append(node)
+        path_tree = list(nx.dfs_edges(G_temp, 0))
+        candidate_e = list(itertools.combinations(path_tree, 15))
+        for curr_edges in candidate_e:
+            e_res_curr = []
+            G_curr = G_temp.copy()
+            for e in curr_edges:
+                if e[0] == s or e[0] == t or e[1] == s or e[1] == t:
+                    continue
+                G_curr.remove_edge(*e)
+                if not nx.is_connected(G_temp):
+                    G_curr.add_edge(*e)
+                else:
+                    e_res_curr.append(e)
+            _, _, SP_temp = get_SP(G_curr, s, t)
+            if SP_temp > max_sp:
+                res_edge, res_node, max_sp = e_res_curr, curr_nodes, SP_temp
+    return res_edge, res_node, max_sp
 
 
 def get_constraints(nodes):
@@ -98,12 +82,13 @@ def get_constraints(nodes):
 
 def get_SP(G, s, t):
     try:
-        SP_nodes = dijkstra_path(G, s, t)
+        SP_nodes = nx.dijkstra_path(G, s, t)
         SP_edges = [(SP_nodes[i-1], SP_nodes[i]) for i in range(1, len(SP_nodes))]
         SP = sum([G.edges[e]["weight"] for e in SP_edges])
         return SP_nodes, SP_edges, SP
-    except NetworkXNoPath as e:
-        raise e
+    except nx.NetworkXNoPath as e:
+        # raise e
+        return None, None, -1
 
 
 # Here's an example of how to run your solver.
