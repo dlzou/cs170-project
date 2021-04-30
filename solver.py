@@ -146,19 +146,24 @@ def solve_anneal(G):
         a, add_to = random.choice(list(move_space.items()))
         H_temp = H.copy()
         if add_to:
+            success = True
             if isinstance(a, int): # Check if a is node
                 H_temp.remove_node(a)
             else:
                 H_temp.remove_edge(*a)
         else:
+            success = False
             if isinstance(a, int):
                 H_temp.add_node(a)
                 for v in G.neighbors(a):
                     if v not in c and (a, v) not in k and (v, a) not in k:
                         H_temp.add_edge(a, v, **G.get_edge_data(a, v))
+                        success = True
             else:
-                H_temp.add_edge(*a, **G.get_edge_data(*a))
-        if not is_connected(H_temp):
+                if a[0] not in c and a[1] not in c:
+                    H_temp.add_edge(*a, **G.get_edge_data(*a))
+                    success = True
+        if not is_connected(H_temp) or not success:
             i += 1
             continue
 
