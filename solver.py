@@ -154,7 +154,7 @@ def solve_anneal(G):
             if isinstance(a, int):
                 H_temp.add_node(a)
                 for v in G.neighbors(a):
-                    if (a, v) not in k and (v, a) not in k:
+                    if v not in c and (a, v) not in k and (v, a) not in k:
                         H_temp.add_edge(a, v, **G.get_edge_data(a, v))
             else:
                 H_temp.add_edge(*a, **G.get_edge_data(*a))
