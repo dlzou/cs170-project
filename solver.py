@@ -28,7 +28,7 @@ def solve_greedy(G):
 
     while len(c) <= c_max and len(k) <= k_max:
         SP_nodes, SP_edges, SP = get_SP(G, s, t)
-        print(SP - GSP)
+        # print(SP - GSP)
 
         rm_node = (None, SP)
         for node in SP_nodes:
@@ -125,10 +125,10 @@ def solve_anneal(G):
     T0 = i_max
 
     while i < i_max:
-        if i % 100 == 0:
-            GSP = dijkstra_path_length(G, s, t)
-            SP = dijkstra_path_length(H, s, t)
-            print(SP - GSP)
+        # if i % 100 == 0:
+        #     GSP = dijkstra_path_length(G, s, t)
+        #     SP = dijkstra_path_length(H, s, t)
+        #     print(SP - GSP)
 
         # Create search space for neighbors
         SP_nodes, SP_edges, SP = get_SP(H, s, t)
