@@ -130,4 +130,8 @@ dmypy.json
 
 # Emacs
 .dir-locals.el
-outputs/
+
+# outputs
+outputs/**
+all_outputs/**
+our_outputs/**
