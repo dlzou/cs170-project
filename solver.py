@@ -60,60 +60,6 @@ def solve_greedy(G):
     return c, k
 
 
-# def solve_greedy_2(G):
-#     H = G.copy()
-#     num_nodes = H.number_of_nodes()
-#     s, t = 0, num_nodes - 1
-#     c_max, k_max = get_constraints(num_nodes)
-#     c, k = [], []
-#     T = int(0.5 * num_nodes ** 2)
-
-#     for i in range(1, T):
-#         # Probability of backtracking by removing random node from c or edge from k
-#         back_prob = exp(-i / num_nodes)
-#         if back_prob > random.random() and len(c) + len(k) > 0:
-#             a = random.choice(c + k)
-#             if isinstance(a, int):
-#                 c.remove(a)
-#                 H.add_node(a)
-#                 for v in range(t):
-#                     if G.has_edge(a, v):
-#                         H.add_edge(a, v, **G.get_edge_data(a, v))
-#             else:
-#                 k.remove(a)
-#                 H.add_edge(*a, **G.get_edge_data(*a))
-#             continue
-
-#         # Run greedy algorithm
-#         SP_nodes, SP_edges, SP = get_SP(H, s, t)
-#         rm_node = (None, SP)
-#         for node in SP_nodes:
-#             H_temp = H.copy()
-#             H_temp.remove_node(node)
-#             if is_connected(H_temp):
-#                 _, _, SP_temp = get_SP(H_temp, s, t)
-#                 if SP_temp >= rm_node[1]:
-#                     rm_node = (node, SP_temp)
-#         rm_edge = (None, SP)
-#         for edge in SP_edges:
-#             H_temp = H.copy()
-#             H_temp.remove_edge(*edge)
-#             if is_connected(H_temp):
-#                 _, _, SP_temp = get_SP(H_temp, s, t)
-#                 if SP_temp >= rm_edge[1]:
-#                     rm_edge = (edge, SP_temp)
-
-#         if rm_node[0] and len(c) < c_max and rm_node[1] >= rm_edge[1]:
-#             H.remove_node(rm_node[0])
-#             c.append(rm_node[0])
-#         elif rm_edge[0] and len(k) < k_max:
-#             H.remove_edge(*rm_edge[0])
-#             k.append(rm_edge[0])
-#         else:
-#             continue
-#     return c, k
-
-
 def solve_anneal(G):
     H = G.copy()
     num_nodes = H.number_of_nodes()
