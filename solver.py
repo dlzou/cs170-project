@@ -184,9 +184,9 @@ def get_SP(G, s, t):
 
 
 # For testing a folder of inputs to create a folder of outputs, you can use glob (need to import it)
-solve = solve_greedy
+solve = solve_anneal
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) == 3:
         size = sys.argv[2]
         if size == "small" or size == "medium" or size == "large":
@@ -194,7 +194,7 @@ if __name__ == '__main__':
             for input_path in inputs:
                 filename = basename(normpath(input_path))[:-3]
                 size = filename.split("-")[0]
-                output_path = "outputs/output-1/" + size + "/" + filename + ".out"
+                output_path = "outputs/" + size + "/" + filename + ".out"
                 G = read_input_file(input_path)
                 print(f"Path difference for {filename}: ", end="")
                 c, k = solve(G)
@@ -214,19 +214,19 @@ if __name__ == '__main__':
         is_valid_solution(G, c, k)
         print("Shortest Path Difference: {}".format(calculate_score(G, c, k)))
 
-        if not exists(dirname(f"outputs/output-1/{size}/")):
+        if not exists(dirname(f"outputs/{size}/")):
             try:
-                makedirs(dirname(f"outputs/output-1/{size}/"))
+                makedirs(dirname(f"outputs/{size}/"))
             except OSError as e: # Guard against race condition
                 raise e
-        write_output_file(G, c, k, f"outputs/output-1/{size}/{filename}.out")
+        write_output_file(G, c, k, f"outputs/{size}/{filename}.out")
 
     else:
         inputs = glob.glob("inputs/*/*.in")
         for input_path in inputs:
             filename = basename(normpath(input_path))[:-3]
             size = filename.split("-")[0]
-            output_path = "outputs/output-1/" + size + "/" + filename + ".out"
+            output_path = "outputs/" + size + "/" + filename + ".out"
             G = read_input_file(input_path)
             print(f"Path difference for {filename}: ", end="")
             c, k = solve(G)
