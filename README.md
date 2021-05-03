@@ -21,3 +21,26 @@ When writing inputs/outputs:
 - Run the functions `read_input_file` and `read_output_file` to validate your files before submitting!
   - These are the functions run by the autograder to validate submissions
 
+
+## Usage
+
+Run on all inputs:
+``` sh
+python solver.py
+```
+
+Run one input:
+``` sh
+python solver.py path/to/input.in
+```
+
+Run on one set of inputs (small, medium, or large):
+
+``` sh
+python solve.py -- small
+```
+
+Running on specific number of inputs:
+``` sh
+python solve_selected.py [# iterations] [size] [list of input numbers, separated by space]
+```
