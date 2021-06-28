@@ -131,7 +131,9 @@ dmypy.json
 # Emacs
 .dir-locals.el
 
-# outputs
+# Our stuff
 outputs/**
 all_outputs/**
 our_outputs/**
+inputs_zip/**
+team.txt
