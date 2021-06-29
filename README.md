@@ -1,6 +1,8 @@
 # CS 170 Project Spring 2021
 
-We competed with other Berkeley students to find the most optimal solutions for a set of inputs to an NP-hard problem. We wrote a simulated annealing algorithm as well as several scripts to compute solutions across multiple computers, and we reached top 30 out of 200+ teams.
+We competed with other Berkeley students to find the most optimal solutions for a set of inputs to an NP-hard graph problem. The problem can roughly be summarized as follows: given a graph G and two vertices s and t, remove a limited number of vertices and edges from G to maximize the distance of the shortest s-t path.
+
+We wrote a greedy algorithm and a simulated annealing algorithm, as well as several scripts to compute solutions across multiple computers. We reached top 30 overall out of 200+ teams.
 
 
 ## Usage
